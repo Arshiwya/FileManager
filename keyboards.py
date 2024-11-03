@@ -24,3 +24,9 @@ tos_rows = [
 ]
 
 tos_markup = ReplyKeyboardMarkup(rows=tos_rows, resize=True)
+
+back_markup = ReplyKeyboardMarkup(
+    rows=[KeyboardButtonRow(buttons=[
+        KeyboardButton(text=Button.BACK),
+    ]), ], resize=True
+)

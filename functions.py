@@ -43,3 +43,18 @@ def change_step(user: MyUser, step):
     cur = db.cursor()
     query = "UPDATE users SET step = ? WHERE chat_id=?"
     cur.execute(query, (step, user.chat_id))
+    db.commit()
+    cur.close()
+
+
+def add_file(chat_id, message_id, file_type=None):
+    cur = db.cursor()
+    if file_type is None:
+        query = 'insert into files (chat_id , message_id ) values (? , ?) '
+        cur.execute(query, (chat_id, message_id))
+    else:
+        query = 'insert into files (chat_id , message_id , type ) values (? ,?, ?) '
+        cur.execute(query, (chat_id, message_id, file_type))
+
+    db.commit()
+    cur.close()

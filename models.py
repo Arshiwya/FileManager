@@ -10,8 +10,9 @@ class MyUser:
 
 
 class Step:
-    TOS = "tos"
-    HOME = "home"
+    TOS = 0
+    HOME = 10
+    SENDING_FILE = 11
 
 
 class Button:

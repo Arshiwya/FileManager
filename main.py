@@ -1,12 +1,12 @@
 from telethon import events
 from telethon.events.newmessage import NewMessage
 from telethon.events.common import EventBuilder
-from telethon.types import User, Channel, PeerUser, UpdateNewMessage, Chat
+from telethon.types import User, Channel, PeerUser, UpdateNewMessage, Chat, MessageMediaPhoto
 from config import bot
 from database import db
 
-from functions import get_user, sign_user, change_step
-from keyboards import home_markup, tos_markup
+from functions import get_user, sign_user, change_step, add_file
+from keyboards import home_markup, tos_markup, back_markup
 from reports import Report, ErrorReport, ReportCode
 from messages import MessageText
 from models import MyUser, Step, Button
@@ -43,7 +43,33 @@ async def my_event_handler(event: NewMessage.Event):
                     await bot.send_message(entity=user.chat_id, message=MessageText.TERM_OF_SERVICE, buttons=tos_markup)
 
             elif user.step == Step.HOME:
-                pass
+
+                if text == Button.ADD_FILE:
+                    change_step(user=user, step=Step.SENDING_FILE)
+                    await bot.send_message(entity=user.chat_id, message=MessageText.SEND_FILE, buttons=back_markup)
+
+                elif text == Button.SEARCH_FILE:
+                    pass
+
+            elif user.step == Step.SENDING_FILE:
+
+                if text == Button.BACK:
+                    change_step(user=user, step=Step.HOME)
+                    await bot.send_message(entity=user.chat_id, message=MessageText.WELLCOME.format(name=user.name),
+                                           buttons=home_markup)
+
+                else:
+                    if event.media:
+
+                        if type(event.media) == MessageMediaPhoto:
+                            chat_id = user.chat_id
+                            message_id = event.message.id
+                            add_file(chat_id=chat_id, message_id=message_id, file_type='image')
+
+                            change_step(user=user, step=Step.HOME)
+
+                            await bot.send_message(entity=user.chat_id, message=MessageText.FILE_SAVED,
+                                                   buttons=home_markup)
 
         del user
 
