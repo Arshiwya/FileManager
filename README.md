@@ -1,1 +1,1 @@
-Define api_id , api_hash , bot_token in secret.py .
+Define api_id , api_hash and bot_token in secret.py .
