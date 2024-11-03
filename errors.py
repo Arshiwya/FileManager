@@ -1,0 +1,3 @@
+class ErrorCode:
+    SQLITE_CONSTRAINT_UNIQUE = 2067
+
