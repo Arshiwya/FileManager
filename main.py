@@ -29,7 +29,7 @@ async def main_handler(event: NewMessage.Event):
 
         else:
             user: MyUser
-            if text == '/start':
+            if text == '/start' and user.step != Step.TOS:
                 change_step(user=user, step=Step.HOME)
                 await bot.send_message(entity=user.chat_id, message=MessageText.WELLCOME.format(name=user.name),
                                        buttons=home_markup)
