@@ -58,3 +58,15 @@ def add_file(chat_id, message_id, file_type=None):
 
     db.commit()
     cur.close()
+
+
+def get_user_files(user: MyUser):
+    cur = db.cursor()
+    query = "select * from files where chat_id = ?"
+    cur.execute(query, (user.chat_id,))
+    result = cur.fetchall()
+
+    if len(result) == 0:
+        return None
+    else:
+        return result

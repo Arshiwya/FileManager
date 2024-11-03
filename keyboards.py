@@ -9,6 +9,10 @@ home_rows = [
     KeyboardButtonRow(buttons=[
         KeyboardButton(text=Button.SEARCH_FILE)
     ]),
+
+    KeyboardButtonRow(buttons=[
+        KeyboardButton(text=Button.MY_FILE)
+    ]),
 ]
 
 home_markup = ReplyKeyboardMarkup(rows=home_rows, resize=True)

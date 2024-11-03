@@ -19,5 +19,6 @@ class Button:
     BACK = "back 🔙"
     ADD_FILE = "Add file ➕"
     SEARCH_FILE = "Search file 🔍"
+    MY_FILE = "My files 🗃"
     ACCEPT_TOS = 'I read and accept ✅'
     REJECT_TOS = "I don't accept ❌"

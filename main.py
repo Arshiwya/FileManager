@@ -5,7 +5,7 @@ from telethon.types import User, Channel, PeerUser, UpdateNewMessage, Chat, Mess
 from config import bot
 from database import db
 
-from functions import get_user, sign_user, change_step, add_file
+from functions import get_user, sign_user, change_step, add_file, get_user_files
 from keyboards import home_markup, tos_markup, back_markup
 from reports import Report, ErrorReport, ReportCode
 from messages import MessageText
@@ -50,6 +50,18 @@ async def my_event_handler(event: NewMessage.Event):
 
                 elif text == Button.SEARCH_FILE:
                     pass
+
+                elif text == Button.MY_FILE:
+                    files = get_user_files(user)
+
+                    if files is None:
+                        await bot.send_message(entity=user.chat_id, message=MessageText.USER_NO_HAVE_FILE)
+
+                    else:
+                        await bot.send_message(entity=user.chat_id,
+                                               message=MessageText.USER_FILES_COUNT.format(count=len(files)))
+
+
 
             elif user.step == Step.SENDING_FILE:
 
