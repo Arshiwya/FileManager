@@ -1,26 +1,25 @@
 from telethon.tl.types import ReplyKeyboardMarkup, KeyboardButtonRow, KeyboardButton
+from models import Button
 
 home_rows = [
     KeyboardButtonRow(buttons=[
-        KeyboardButton(text='افزودن فایل'),
+        KeyboardButton(text=Button.ADD_FILE),
     ]),
 
     KeyboardButtonRow(buttons=[
-        KeyboardButton(text='جستوجو فایل')
+        KeyboardButton(text=Button.SEARCH_FILE)
     ]),
 ]
 
 home_markup = ReplyKeyboardMarkup(rows=home_rows, resize=True)
 
-accept_tos_btn = 'I read and accept ✅'
-
 tos_rows = [
     KeyboardButtonRow(buttons=[
-        KeyboardButton(text='I read and accept ✅'),
+        KeyboardButton(text=Button.ACCEPT_TOS),
     ]),
 
     KeyboardButtonRow(buttons=[
-        KeyboardButton(text="I don't accept ❌")
+        KeyboardButton(text=Button.REJECT_TOS)
     ]),
 ]
 

@@ -6,10 +6,10 @@ from config import bot
 from database import db
 
 from functions import get_user, sign_user, change_step
-from keyboards import home_markup, tos_markup, accept_tos_btn
+from keyboards import home_markup, tos_markup
 from reports import Report, ErrorReport, ReportCode
 from messages import MessageText
-from models import MyUser, Step
+from models import MyUser, Step, Button
 
 
 @bot.on(event=NewMessage)
@@ -33,7 +33,7 @@ async def my_event_handler(event: NewMessage.Event):
 
             if user.step == Step.TOS:
 
-                if text == accept_tos_btn:
+                if text == Button.ACCEPT_TOS:
                     change_step(user=user, step=Step.HOME)
                     await bot.send_message(entity=user.chat_id, message=MessageText.WELLCOME.format(name=user.name),
                                            buttons=home_markup)
@@ -45,19 +45,10 @@ async def my_event_handler(event: NewMessage.Event):
             elif user.step == Step.HOME:
                 pass
 
+        del user
+
     elif type(chat) == Channel:
         pass
-
-    del user
-
-
-#     operation: Report = sign_user(user)
-#
-#     if operation.status_code == ReportCode.SUCCESS:
-#         await bot.send_message(entity=user.id, message=MessageText.SUCCESS_SIGN_IN)
-#
-#     elif operation.status_code == ReportCode.UNSUCCESSFUL:
-#         pass
 
 
 bot.start()
