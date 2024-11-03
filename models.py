@@ -12,3 +12,11 @@ class MyUser:
 class Step:
     TOS = "tos"
     HOME = "home"
+
+
+class Button:
+    BACK = "back 🔙"
+    ADD_FILE = "Add file ➕"
+    SEARCH_FILE = "Search file 🔍"
+    ACCEPT_TOS = 'I read and accept ✅'
+    REJECT_TOS = "I don't accept ❌"
