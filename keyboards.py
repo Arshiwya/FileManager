@@ -1,5 +1,7 @@
 from telethon.tl.types import ReplyKeyboardMarkup, KeyboardButtonRow, KeyboardButton
+from telethon import Button as button
 from models import Button
+from telethon.tl.types import KeyboardButtonUserProfile
 
 home_rows = [
     KeyboardButtonRow(buttons=[
@@ -12,6 +14,10 @@ home_rows = [
 
     KeyboardButtonRow(buttons=[
         KeyboardButton(text=Button.MY_FILE)
+    ]),
+
+    KeyboardButtonRow(buttons=[
+        KeyboardButton(text=Button.MANAGE_FILE)
     ]),
 ]
 
@@ -34,3 +40,15 @@ back_markup = ReplyKeyboardMarkup(
         KeyboardButton(text=Button.BACK),
     ]), ], resize=True
 )
+
+
+def make_manage_inline_markup(file_id):
+    markup = [
+        [
+            button.inline(text='Manage File ⚙️', data=f'manage-{file_id}'),
+
+        ],
+
+    ]
+
+    return markup

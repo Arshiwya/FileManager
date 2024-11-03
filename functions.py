@@ -56,8 +56,12 @@ def add_file(chat_id, message_id, file_type=None):
         query = 'insert into files (chat_id , message_id , type ) values (? ,?, ?) '
         cur.execute(query, (chat_id, message_id, file_type))
 
+    file_id = cur.lastrowid
+
     db.commit()
     cur.close()
+
+    return file_id
 
 
 def get_user_files(user: MyUser):
@@ -68,5 +72,18 @@ def get_user_files(user: MyUser):
 
     if len(result) == 0:
         return None
+    else:
+        return result
+
+
+def get_file(file_id):
+    cur = db.cursor()
+    query = "select * from files where file_id = ?"
+    cur.execute(query, (file_id,))
+    result = cur.fetchone()
+
+    if result is None:
+        return None
+
     else:
         return result
