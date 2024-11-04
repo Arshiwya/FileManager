@@ -24,3 +24,20 @@ class Button:
     MANAGE_FILE = "Manage files ⚙️"
     ACCEPT_TOS = 'I read and accept ✅'
     REJECT_TOS = "I don't accept ❌"
+
+
+class CallBackQueryPrefix:
+    MANAGE = "manage-"
+    SET_FILE_TITLE = 'title-'
+    DELETE_FILE = 'delete-'
+
+    @classmethod
+    def get_file_id(cls, prefix: str, data: str):
+        splits = data.split(sep=prefix)
+        file_id = splits[1]
+
+        return file_id
+
+
+class CallBackQuery:
+    CLOSE_PANEL = 'close-panel'

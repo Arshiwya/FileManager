@@ -47,26 +47,25 @@ def change_step(user: MyUser, step):
     cur.close()
 
 
-def add_file(chat_id, message_id, file_type=None):
+def add_file(file_id, access_hash, file_reference, uploader, file_type=None):
     cur = db.cursor()
     if file_type is None:
-        query = 'insert into files (chat_id , message_id ) values (? , ?) '
-        cur.execute(query, (chat_id, message_id))
+        query = 'insert into files (file_id,access_hash , file_reference , uploader ) values (? , ? , ? , ?) '
+        cur.execute(query, (file_id, access_hash, file_reference, uploader))
     else:
-        query = 'insert into files (chat_id , message_id , type ) values (? ,?, ?) '
-        cur.execute(query, (chat_id, message_id, file_type))
+        query = 'insert into files (file_id,access_hash , file_reference , type , uploader ) values (? ,?, ? ,?, ?) '
+        cur.execute(query, (file_id, access_hash, file_reference, file_type, uploader))
 
-    file_id = cur.lastrowid
-
+    rowid = cur.lastrowid
     db.commit()
     cur.close()
 
-    return file_id
+    return rowid
 
 
 def get_user_files(user: MyUser):
     cur = db.cursor()
-    query = "select * from files where chat_id = ?"
+    query = "select * from files where uploader = ?"
     cur.execute(query, (user.chat_id,))
     result = cur.fetchall()
 
@@ -78,7 +77,7 @@ def get_user_files(user: MyUser):
 
 def get_file(file_id):
     cur = db.cursor()
-    query = "select * from files where file_id = ?"
+    query = "select * from files where rowid = ?"
     cur.execute(query, (file_id,))
     result = cur.fetchone()
 

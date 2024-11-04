@@ -24,3 +24,4 @@ FILE_ID  = `{file_id}`
     FILE_NOT_FOUND = "Nothing found ! Try again ."
 
     TEXT_MESSAGE_NOT_SUPPORT_FOR_FILE = "Text messages are not supported as file ❌"
+    PANEL_CLOSED = "🔴 Closed panel 🔴"

@@ -1,6 +1,6 @@
 from telethon.tl.types import ReplyKeyboardMarkup, KeyboardButtonRow, KeyboardButton
 from telethon import Button as button
-from models import Button
+from models import Button, CallBackQueryPrefix, CallBackQuery
 from telethon.tl.types import KeyboardButtonUserProfile
 
 home_rows = [
@@ -46,6 +46,25 @@ def make_manage_inline_markup(file_id):
     markup = [
         [
             button.inline(text='Manage File ⚙️', data=f'manage-{file_id}'),
+
+        ],
+
+    ]
+
+    return markup
+
+
+def make_manage_panel_inline_markup(file_id):
+    markup = [
+        [
+            button.inline(text='Set caption 🔖', data=f'{CallBackQueryPrefix.SET_FILE_TITLE}{file_id}'),
+            button.inline(text='Delete file 🗑', data=f'{CallBackQueryPrefix.DELETE_FILE}{file_id}'),
+
+        ],
+
+        [
+
+            button.inline(text='🔴 Close panel 🔴', data=f'{CallBackQuery.CLOSE_PANEL}'),
 
         ],
 
