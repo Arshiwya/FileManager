@@ -23,3 +23,4 @@ FILE_ID  = `{file_id}`
     BAD_FORMAT_SENT_ID = "Please send a numeric message ! "
     FILE_NOT_FOUND = "Nothing found ! Try again ."
 
+    TEXT_MESSAGE_NOT_SUPPORT_FOR_FILE = "Text messages are not supported as file ❌"

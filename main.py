@@ -81,15 +81,14 @@ async def main_handler(event: NewMessage.Event):
 
                         if type(event.media) == MessageMediaPhoto:
                             change_step(user=user, step=Step.HOME)
-
                             chat_id = user.chat_id
                             message_id = event.message.id
                             file_id = add_file(chat_id=chat_id, message_id=message_id, file_type='image')
                             markup = make_manage_inline_markup(file_id=file_id)
 
-                            await bot.send_message(entity=user.chat_id,
-                                                   message=MessageText.IMAGE_FILE_SAVED.format(file_id=file_id),
-                                                   buttons=markup)
+                            await bot.send_file(entity=user.chat_id, file=event.media,
+                                                caption=MessageText.IMAGE_FILE_SAVED.format(file_id=file_id),
+                                                buttons=markup)
                             await bot.send_message(entity=user.chat_id,
                                                    message=MessageText.WELLCOME.format(name=user.name),
                                                    buttons=home_markup)
@@ -102,9 +101,17 @@ async def main_handler(event: NewMessage.Event):
                             file_id = add_file(chat_id=chat_id, message_id=message_id, file_type='doc')
                             markup = make_manage_inline_markup(file_id=file_id)
 
+                            await bot.send_file(entity=user.chat_id, file=event.media,
+                                                caption=MessageText.FILE_SAVED.format(file_id=file_id),
+                                                buttons=markup)
                             await bot.send_message(entity=user.chat_id,
-                                                   message=MessageText.FILE_SAVED.format(file_id=file_id),
-                                                   buttons=markup)
+                                                   message=MessageText.WELLCOME.format(name=user.name),
+                                                   buttons=home_markup)
+
+                    elif type(event) == NewMessage.Event:
+                        await bot.send_message(entity=user.chat_id,
+                                               message=MessageText.TEXT_MESSAGE_NOT_SUPPORT_FOR_FILE,
+                                               buttons=back_markup)
 
             elif user.step == Step.SENDING_FILE_ID_FOR_MANAGE:
                 if text == Button.BACK:
