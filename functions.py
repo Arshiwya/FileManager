@@ -63,6 +63,14 @@ def add_file(file_id, access_hash, file_reference, uploader, file_type=None):
     return rowid
 
 
+def delete_file(rowid):
+    cur = db.cursor()
+    query = "DELETE FROM files WHERE rowid =?  "
+    cur.execute(query, (rowid,))
+    db.commit()
+    cur.close()
+
+
 def get_user_files(user: MyUser):
     cur = db.cursor()
     query = "select * from files where uploader = ?"
@@ -81,6 +89,45 @@ def get_file(file_id):
     cur.execute(query, (file_id,))
     result = cur.fetchone()
 
+    if result is None:
+        return None
+
+    else:
+        return result
+
+
+def set_file_type(file_id, file_type):
+    cur = db.cursor()
+    query = "UPDATE files SET type = ? WHERE file_id=?"
+    cur.execute(query, (file_type, file_id))
+    db.commit()
+    cur.close()
+
+
+def get_file_uploader(rowid):
+    cur = db.cursor()
+    query = "select uploader from files where rowid = ?"
+    cur.execute(query, (rowid,))
+    result = cur.fetchone()
+
+    if result is not None:
+        return result[0]
+
+
+def change_file_status(file_rowid, status: int):
+    cur = db.cursor()
+    query = "UPDATE files SET status = ? WHERE rowid=?"
+    cur.execute(query, (status, file_rowid))
+    db.commit()
+    cur.close()
+
+
+def get_file_status(file_rowid):
+    cur = db.cursor()
+    query = "select status from files where rowid = ?"
+    cur.execute(query, (file_rowid,))
+    result = cur.fetchone()
+    cur.close()
     if result is None:
         return None
 

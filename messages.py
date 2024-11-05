@@ -25,3 +25,12 @@ FILE_ID  = `{file_id}`
 
     TEXT_MESSAGE_NOT_SUPPORT_FOR_FILE = "Text messages are not supported as file ❌"
     PANEL_CLOSED = "🔴 Closed panel 🔴"
+    PROBLEM_OCCURRED = "Somthing went wrong with this file!"
+
+    ACCESS_DENIED_WARNING = "Access denied ❌"
+    FILE_HAS_PRIVACY_PROBLEM = "Privacy problem ❌"
+
+    FILE_UPDATED = "Updated ♻️"
+    FILE_DELETED = "This file has deleted successfully ✅"
+
+    WRONG_INLINE_INPUT = "Wrong input ‼️"

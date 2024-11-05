@@ -42,10 +42,10 @@ back_markup = ReplyKeyboardMarkup(
 )
 
 
-def make_manage_inline_markup(file_id):
+def make_manage_inline_markup(rowid):
     markup = [
         [
-            button.inline(text='Manage File ⚙️', data=f'manage-{file_id}'),
+            button.inline(text='Manage File ⚙️', data=f'manage-{rowid}'),
 
         ],
 
@@ -54,17 +54,52 @@ def make_manage_inline_markup(file_id):
     return markup
 
 
-def make_manage_panel_inline_markup(file_id):
+def make_manage_panel_inline_markup(rowid, status):
+    published_status = "Published ✅"
+    draft_status = "Draft ⚠️"
+
+    if status == 1:
+        status_text = published_status
+        prefix = CallBackQueryPrefix.DEACTIVATE_STATUS
+
+    else:
+        status_text = draft_status
+        prefix = CallBackQueryPrefix.ACTIVE_STATUS
+
     markup = [
         [
-            button.inline(text='Set caption 🔖', data=f'{CallBackQueryPrefix.SET_FILE_TITLE}{file_id}'),
-            button.inline(text='Delete file 🗑', data=f'{CallBackQueryPrefix.DELETE_FILE}{file_id}'),
+            button.inline(text='Set title 🔖', data=f'{CallBackQueryPrefix.SET_FILE_TITLE}{rowid}'),
+            button.inline(text='Delete file 🗑', data=f'{CallBackQueryPrefix.DELETE_FILE}{rowid}'),
+
+        ],
+        [
+
+            button.inline(text='File Status 🚦 :', data=f'{CallBackQuery.NULL}'),
+            button.inline(text=f'{status_text}', data=f'{prefix}{rowid}'),
 
         ],
 
         [
 
             button.inline(text='🔴 Close panel 🔴', data=f'{CallBackQuery.CLOSE_PANEL}'),
+
+        ],
+
+    ]
+
+    return markup
+
+
+def make_delete_panel_inline_markup(rowid):
+    markup = [
+        [
+            button.inline(text='Are you sure to delete this file ❓', data=f'{CallBackQuery.NULL}'),
+
+        ],
+
+        [
+            button.inline(text='Yes ✅', data=f'{CallBackQueryPrefix.KILL_FILE}{rowid}'),
+            button.inline(text='No ❌', data=f'{CallBackQueryPrefix.MANAGE}{rowid}'),
 
         ],
 

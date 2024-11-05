@@ -16,6 +16,18 @@ class Step:
     SENDING_FILE_ID_FOR_MANAGE = 12
 
 
+class StepPrefix:
+    MANAGING_FILE = "managing-"
+    CONFIRM_DELETE_FILE = "delete-"
+
+    @classmethod
+    def get_file_rowid(cls, prefix: str, step: str):
+        splits = step.split(sep=prefix)
+        file_rowid = splits[1]
+
+        return file_rowid
+
+
 class Button:
     BACK = "back 🔙"
     ADD_FILE = "Add file ➕"
@@ -30,14 +42,18 @@ class CallBackQueryPrefix:
     MANAGE = "manage-"
     SET_FILE_TITLE = 'title-'
     DELETE_FILE = 'delete-'
+    KILL_FILE = 'kill-'
+    ACTIVE_STATUS = 'status+'
+    DEACTIVATE_STATUS = 'status-'
 
     @classmethod
-    def get_file_id(cls, prefix: str, data: str):
+    def get_file_rowid(cls, prefix: str, data: str):
         splits = data.split(sep=prefix)
-        file_id = splits[1]
+        file_rowid = splits[1]
 
-        return file_id
+        return file_rowid
 
 
 class CallBackQuery:
+    NULL = 'null'
     CLOSE_PANEL = 'close-panel'
