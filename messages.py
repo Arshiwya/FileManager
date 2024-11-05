@@ -34,3 +34,10 @@ FILE_ID  = `{file_id}`
     FILE_DELETED = "This file has deleted successfully ✅"
 
     WRONG_INLINE_INPUT = "Wrong input ‼️"
+
+    DOWNLOAD_LINK = """
+    ⛓️Download link for file : `{rowid}`
+    
+    {link}
+    
+    """

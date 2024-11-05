@@ -13,7 +13,7 @@ from keyboards import home_markup, tos_markup, back_markup, make_manage_inline_m
     make_delete_panel_inline_markup
 from reports import Report, ErrorReport, ReportCode
 from messages import MessageText
-from models import MyUser, Step, StepPrefix, Button, CallBackQueryPrefix, CallBackQuery
+from models import MyUser, Step, Link, StepPrefix, Button, CallBackQueryPrefix, CallBackQuery
 
 
 @bot.on(event=NewMessage)
@@ -202,8 +202,6 @@ async def my_event_handler(event: CallbackQuery.Event):
     chat = event.chat
     message: Message = await event.get_message()
 
-    print(data)
-
     if type(chat) == User:
 
         user = get_user(chat)
@@ -288,6 +286,12 @@ async def my_event_handler(event: CallbackQuery.Event):
                 markup = make_manage_panel_inline_markup(file_rowid, status=0)
                 await event.answer(message=MessageText.FILE_UPDATED, alert=True)
                 await bot.edit_message(entity=user.chat_id, message=message, buttons=markup)
+
+            elif CallBackQueryPrefix.DOWNLOAD_LINK in data:
+                file_rowid = CallBackQueryPrefix.get_file_rowid(prefix=CallBackQueryPrefix.DOWNLOAD_LINK, data=data)
+                dl = Link.DOWNLOAD_FILE.format(rowid=file_rowid)
+                message = MessageText.DOWNLOAD_LINK.format(rowid=file_rowid, link=dl)
+                await bot.send_message(entity=user.chat_id, message=message)
 
         del user
 

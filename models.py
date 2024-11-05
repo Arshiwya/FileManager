@@ -1,3 +1,6 @@
+from secret import bot_username
+
+
 class MyUser:
     chat_id = None
     name = None
@@ -45,6 +48,7 @@ class CallBackQueryPrefix:
     KILL_FILE = 'kill-'
     ACTIVE_STATUS = 'status+'
     DEACTIVATE_STATUS = 'status-'
+    DOWNLOAD_LINK = 'dllink-'
 
     @classmethod
     def get_file_rowid(cls, prefix: str, data: str):
@@ -57,3 +61,7 @@ class CallBackQueryPrefix:
 class CallBackQuery:
     NULL = 'null'
     CLOSE_PANEL = 'close-panel'
+
+
+class Link:
+    DOWNLOAD_FILE = f'https://telegram.me/{bot_username}?start=dl_' + '{rowid}'

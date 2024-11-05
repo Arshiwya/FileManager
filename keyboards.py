@@ -78,6 +78,12 @@ def make_manage_panel_inline_markup(rowid, status):
             button.inline(text=f'{status_text}', data=f'{prefix}{rowid}'),
 
         ],
+        [
+
+            button.inline(text='Download link ⛓️', data=f'{CallBackQueryPrefix.DOWNLOAD_LINK}{rowid}'),
+            button.inline(text=f'Empty yet', data=f'{CallBackQuery.NULL}'),
+
+        ],
 
         [
 
