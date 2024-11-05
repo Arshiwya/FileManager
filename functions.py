@@ -133,3 +133,11 @@ def get_file_status(file_rowid):
 
     else:
         return result
+
+
+def set_file_title(file_rowid, title):
+    cur = db.cursor()
+    query = "UPDATE files SET title = ? WHERE rowid=?"
+    cur.execute(query, (title, file_rowid))
+    db.commit()
+    cur.close()

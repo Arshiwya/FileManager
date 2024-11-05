@@ -32,6 +32,7 @@ class Button:
 class StepPrefix:
     MANAGING_FILE = "managing-"
     CONFIRM_DELETE_FILE = "delete-"
+    SETTING_TITLE_FOR_FILE = 'titling-'
 
     @classmethod
     def get_file_rowid(cls, prefix: str, step: str):

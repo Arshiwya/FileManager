@@ -8,7 +8,7 @@ from telethon.errors.rpcerrorlist import MediaEmptyError
 from config import bot
 
 from functions import get_user, sign_user, change_step, add_file, delete_file, get_user_files, get_file, set_file_type, \
-    get_file_uploader, change_file_status, get_file_status
+    get_file_uploader, change_file_status, get_file_status, set_file_title
 from keyboards import home_markup, tos_markup, back_markup, make_manage_inline_markup, make_manage_panel_inline_markup, \
     make_delete_panel_inline_markup
 from reports import Report, ErrorReport, ReportCode
@@ -57,18 +57,25 @@ async def main_handler(event: NewMessage.Event):
                     file_reference = file[3]
                     file_type = file[4]
                     status = file[5]
+                    title = file[6]
+
+                    if title != "":
+                        title = MessageText.FILE_MESSAGE_STRUCTURE.format(title=title)
+
                     uploader = get_file_uploader(rowid=file_rowid)
 
                     if status == 1:
                         if file_type == 'image':
                             image = InputPhoto(id=file_id, access_hash=access_hash,
                                                file_reference=file_reference)
-                            await bot.send_file(entity=user.chat_id, file=image, caption=None)
+                            await bot.send_file(entity=user.chat_id, file=image,
+                                                caption=title)
 
                         elif file_type == 'doc':
                             file = InputDocument(id=file_id, access_hash=access_hash,
                                                  file_reference=file_reference)
-                            await bot.send_file(entity=user.chat_id, file=file, caption=None)
+                            await bot.send_file(entity=user.chat_id, file=file,
+                                                caption=title)
 
                     else:
                         if uploader == user.chat_id:
@@ -76,17 +83,35 @@ async def main_handler(event: NewMessage.Event):
                             if file_type == 'image':
                                 image = InputPhoto(id=file_id, access_hash=access_hash,
                                                    file_reference=file_reference)
-                                await bot.send_file(entity=user.chat_id, file=image, caption=None)
+                                await bot.send_file(entity=user.chat_id, file=image,
+                                                    caption=title)
 
                             elif file_type == 'doc':
                                 file = InputDocument(id=file_id, access_hash=access_hash,
                                                      file_reference=file_reference)
-                                await bot.send_file(entity=user.chat_id, file=file, caption=None)
+                                await bot.send_file(entity=user.chat_id, file=file,
+                                                    caption=title)
 
                             await bot.send_message(entity=user.chat_id, message=MessageText.FILE_IS_DRAFT_OWNER_TEXT)
 
                         else:
                             await bot.send_message(entity=user.chat_id, message=MessageText.FILE_IS_DRAFT)
+
+            elif StepPrefix.SETTING_TITLE_FOR_FILE in str(user.step):
+                if text == Button.BACK:
+                    change_step(user=user, step=Step.HOME)
+                    await bot.send_message(entity=user.chat_id, message=MessageText.WELLCOME.format(name=user.name),
+                                           buttons=home_markup)
+
+                else:
+                    file_rowid = StepPrefix.get_file_rowid(prefix=StepPrefix.SETTING_TITLE_FOR_FILE, step=user.step)
+
+                    if len(text) > 60:
+                        await bot.send_message(entity=user.chat_id, message=MessageText.TOO_LONG_TITLE)
+                    else:
+                        change_step(user=user, step=Step.HOME)
+                        set_file_title(file_rowid=file_rowid, title=text)
+                        await bot.send_message(entity=user.chat_id, message=MessageText.TITLE_SET, buttons=home_markup)
 
             elif user.step == Step.TOS:
 
@@ -204,18 +229,23 @@ async def main_handler(event: NewMessage.Event):
                                 file_reference = file[3]
                                 file_type = file[4]
                                 status = file[5]
+                                title = file[6]
+                                if title != "" and title is not None:
+                                    title = MessageText.FILE_MESSAGE_STRUCTURE.format(title=title)
+
                                 markup = make_manage_panel_inline_markup(rowid=rowid, status=status)
+
                                 if file_type == 'image':
                                     image = InputPhoto(id=file_id, access_hash=access_hash,
                                                        file_reference=file_reference)
                                     # caption = await bot.get_messages(caption[0], ids=caption[1])
                                     # print(caption)
-                                    await bot.send_file(entity=user.chat_id, file=image, caption=None, buttons=markup)
+                                    await bot.send_file(entity=user.chat_id, file=image, caption=title, buttons=markup)
 
                                 elif file_type == 'doc':
                                     file = InputDocument(id=file_id, access_hash=access_hash,
                                                          file_reference=file_reference)
-                                    await bot.send_file(entity=user.chat_id, file=file, caption=None, buttons=markup)
+                                    await bot.send_file(entity=user.chat_id, file=file, caption=title, buttons=markup)
 
                                 else:
                                     try:
@@ -297,11 +327,11 @@ async def my_event_handler(event: CallbackQuery.Event):
                     delete_file(file_rowid)
 
                 else:
-                    uploader = file_uploader[0]
+                    uploader = file_uploader
 
                     if user.chat_id == int(uploader):
-                        change_step(user=user, step=(StepPrefix.SETTING_CAPTION_FOR_FILE + file_rowid))
-                        await bot.send_message(entity=user.chat_id, message=MessageText.SEND_DESIRE_CAPTION,
+                        change_step(user=user, step=(StepPrefix.SETTING_TITLE_FOR_FILE + file_rowid))
+                        await bot.send_message(entity=user.chat_id, message=MessageText.SEND_DESIRE_TITLE,
                                                buttons=back_markup)
                     else:
                         await event.answer(message=MessageText.ACCESS_DENIED_WARNING, alert=True)

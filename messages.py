@@ -42,5 +42,12 @@ FILE_ID  = `{file_id}`
     
     """
 
-    FILE_IS_DRAFT = "This file will be published soon ⏳"
-    FILE_IS_DRAFT_OWNER_TEXT = "This file is yours and draft . You can make it published in manage panel ⚠️"
+    FILE_IS_DRAFT = "This file will be published soon. ⏳"
+    FILE_IS_DRAFT_OWNER_TEXT = "This file is yours and draft . You can make it published in manage panel. ⚠️"
+
+    SEND_DESIRE_TITLE = "Please send title for file 📨"
+    TOO_LONG_TITLE = "Title should be 60 character or less. ‼ "
+
+    TITLE_SET = "Title set for file . ✅"
+
+    FILE_MESSAGE_STRUCTURE = "**Title** : {title} "
