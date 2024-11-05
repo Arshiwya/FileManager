@@ -50,4 +50,9 @@ FILE_ID  = `{file_id}`
 
     TITLE_SET = "Title set for file . ✅"
 
-    FILE_MESSAGE_STRUCTURE = "**Title** : {title} "
+    FILE_MESSAGE_STRUCTURE = """
+**Title** 🏷 : {title} 
+    
+**Downloads**  📥: {downloads}
+    
+    """

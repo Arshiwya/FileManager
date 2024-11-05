@@ -142,3 +142,34 @@ def set_file_title(file_rowid, title):
     cur.execute(query, (title, file_rowid))
     db.commit()
     cur.close()
+
+
+def add_one_download_to_file(file_rowid):
+    cur = db.cursor()
+    query = "select downloads  from files where rowid = ?"
+    cur.execute(query, (file_rowid,))
+    result = cur.fetchone()
+
+    if result is not None:
+        downloads = result[0]
+        downloads += 1
+
+        query = "UPDATE files SET downloads = ? WHERE rowid=?"
+        cur.execute(query, (downloads, file_rowid))
+        db.commit()
+        cur.close()
+
+    else:
+        cur.close()
+        return None
+
+
+def get_file_downloads(file_rowid):
+    cur = db.cursor()
+    query = "select downloads  from files where rowid = ?"
+    cur.execute(query, (file_rowid,))
+    result = cur.fetchone()
+    if result is None:
+        return 0
+    else:
+        return result[0]

@@ -54,7 +54,7 @@ def make_manage_inline_markup(rowid):
     return markup
 
 
-def make_manage_panel_inline_markup(rowid, status):
+def make_manage_panel_inline_markup(rowid, status, downloads):
     published_status = "Published ✅"
     draft_status = "Draft ⚠️"
 
@@ -81,7 +81,7 @@ def make_manage_panel_inline_markup(rowid, status):
         [
 
             button.inline(text='Download link ⛓️', data=f'{CallBackQueryPrefix.DOWNLOAD_LINK}{rowid}'),
-            button.inline(text=f'Empty yet', data=f'{CallBackQuery.NULL}'),
+            button.inline(text=f'Downloads 📥 : {downloads}', data=f'{CallBackQuery.NULL}'),
 
         ],
 

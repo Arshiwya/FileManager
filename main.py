@@ -8,7 +8,7 @@ from telethon.errors.rpcerrorlist import MediaEmptyError
 from config import bot
 
 from functions import get_user, sign_user, change_step, add_file, delete_file, get_user_files, get_file, set_file_type, \
-    get_file_uploader, change_file_status, get_file_status, set_file_title
+    get_file_uploader, change_file_status, get_file_status, set_file_title, add_one_download_to_file, get_file_downloads
 from keyboards import home_markup, tos_markup, back_markup, make_manage_inline_markup, make_manage_panel_inline_markup, \
     make_delete_panel_inline_markup, make_edit_title_panel_inline_markup
 from reports import Report, ErrorReport, ReportCode
@@ -58,13 +58,16 @@ async def main_handler(event: NewMessage.Event):
                     file_type = file[4]
                     status = file[5]
                     title = file[6]
+                    downloads = file[7]
+                    if title != "" and title is not None:
+                        title = MessageText.FILE_MESSAGE_STRUCTURE.format(title=title, downloads=downloads)
 
-                    if title != "":
-                        title = MessageText.FILE_MESSAGE_STRUCTURE.format(title=title)
+                    else:
+                        title = MessageText.FILE_MESSAGE_STRUCTURE.format(title="Not set", downloads=downloads)
 
                     uploader = get_file_uploader(rowid=file_rowid)
-
                     if status == 1:
+
                         if file_type == 'image':
                             image = InputPhoto(id=file_id, access_hash=access_hash,
                                                file_reference=file_reference)
@@ -76,6 +79,9 @@ async def main_handler(event: NewMessage.Event):
                                                  file_reference=file_reference)
                             await bot.send_file(entity=user.chat_id, file=file,
                                                 caption=title)
+
+                        if uploader != user.chat_id:
+                            add_one_download_to_file(file_rowid=file_rowid)
 
                     else:
                         if uploader == user.chat_id:
@@ -231,10 +237,12 @@ async def main_handler(event: NewMessage.Event):
                                 file_type = file[4]
                                 status = file[5]
                                 title = file[6]
+                                downloads = file[7]
                                 if title != "" and title is not None:
-                                    title = MessageText.FILE_MESSAGE_STRUCTURE.format(title=title)
+                                    title = MessageText.FILE_MESSAGE_STRUCTURE.format(title=title, downloads=downloads)
 
-                                markup = make_manage_panel_inline_markup(rowid=rowid, status=status)
+                                markup = make_manage_panel_inline_markup(rowid=rowid, status=status,
+                                                                         downloads=downloads)
 
                                 if file_type == 'image':
                                     image = InputPhoto(id=file_id, access_hash=access_hash,
@@ -305,7 +313,8 @@ async def my_event_handler(event: CallbackQuery.Event):
                 file_rowid = StepPrefix.get_file_rowid(prefix=StepPrefix.EDITING_TITLE, step=user.step)
                 change_step(user=user, step=Step.HOME)
                 status = get_file_status(file_rowid=file_rowid)
-                markup = make_manage_panel_inline_markup(rowid=file_rowid, status=status)
+                downloads = get_file_downloads(file_rowid=file_rowid)
+                markup = make_manage_panel_inline_markup(rowid=file_rowid, status=status, downloads=downloads)
                 await bot.edit_message(entity=user.chat_id, message=message, buttons=markup)
 
             elif data == CallBackQuery.NULL:
@@ -320,8 +329,8 @@ async def my_event_handler(event: CallbackQuery.Event):
                 prefix = CallBackQueryPrefix.MANAGE
                 file_rowid = CallBackQueryPrefix.get_file_rowid(prefix=prefix, data=data)
                 status = get_file_status(file_rowid=file_rowid)
-                markup = make_manage_panel_inline_markup(file_rowid, status=status)
-
+                downloads = get_file_downloads(file_rowid=file_rowid)
+                markup = make_manage_panel_inline_markup(rowid=file_rowid, status=status, downloads=downloads)
                 await bot.edit_message(entity=user.chat_id, message=message, buttons=markup)
 
             elif CallBackQueryPrefix.EDITE_FILE_TITLE in data:
@@ -348,7 +357,8 @@ async def my_event_handler(event: CallbackQuery.Event):
                 file_rowid = CallBackQueryPrefix.get_file_rowid(prefix=CallBackQueryPrefix.DELETE_FILE_TITLE, data=data)
                 set_file_title(file_rowid=file_rowid, title='')
                 status = get_file_status(file_rowid=file_rowid)
-                markup = make_manage_panel_inline_markup(rowid=file_rowid, status=status)
+                downloads = get_file_downloads(file_rowid=file_rowid)
+                markup = make_manage_panel_inline_markup(rowid=file_rowid, status=status, downloads=downloads)
                 await event.answer(message=MessageText.FILE_UPDATED, alert=True)
                 await bot.edit_message(entity=user.chat_id, message=message, text="", buttons=markup)
 
@@ -375,14 +385,16 @@ async def my_event_handler(event: CallbackQuery.Event):
             elif CallBackQueryPrefix.ACTIVE_STATUS in data:
                 file_rowid = CallBackQueryPrefix.get_file_rowid(prefix=CallBackQueryPrefix.ACTIVE_STATUS, data=data)
                 change_file_status(file_rowid=file_rowid, status=1)
-                markup = make_manage_panel_inline_markup(file_rowid, status=1)
+                downloads = get_file_downloads(file_rowid=file_rowid)
+                markup = make_manage_panel_inline_markup(rowid=file_rowid, status=1, downloads=downloads)
                 await event.answer(message=MessageText.FILE_UPDATED, alert=True)
                 await bot.edit_message(entity=user.chat_id, message=message, buttons=markup)
 
             elif CallBackQueryPrefix.DEACTIVATE_STATUS in data:
                 file_rowid = CallBackQueryPrefix.get_file_rowid(prefix=CallBackQueryPrefix.DEACTIVATE_STATUS, data=data)
                 change_file_status(file_rowid=file_rowid, status=0)
-                markup = make_manage_panel_inline_markup(file_rowid, status=0)
+                downloads = get_file_downloads(file_rowid=file_rowid)
+                markup = make_manage_panel_inline_markup(rowid=file_rowid, status=0, downloads=downloads)
                 await event.answer(message=MessageText.FILE_UPDATED, alert=True)
                 await bot.edit_message(entity=user.chat_id, message=message, buttons=markup)
 
