@@ -132,7 +132,8 @@ def get_file_status(file_rowid):
         return None
 
     else:
-        return result
+
+        return result[0]
 
 
 def set_file_title(file_rowid, title):

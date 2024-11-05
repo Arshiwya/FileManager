@@ -10,7 +10,7 @@ from config import bot
 from functions import get_user, sign_user, change_step, add_file, delete_file, get_user_files, get_file, set_file_type, \
     get_file_uploader, change_file_status, get_file_status, set_file_title
 from keyboards import home_markup, tos_markup, back_markup, make_manage_inline_markup, make_manage_panel_inline_markup, \
-    make_delete_panel_inline_markup
+    make_delete_panel_inline_markup, make_edit_title_panel_inline_markup
 from reports import Report, ErrorReport, ReportCode
 from messages import MessageText
 from models import MyUser, Step, Link, TextOperationPrefix, StepPrefix, Button, CallBackQueryPrefix, CallBackQuery
@@ -207,6 +207,7 @@ async def main_handler(event: NewMessage.Event):
                                                buttons=back_markup)
 
             elif user.step == Step.SENDING_FILE_ID_FOR_MANAGE:
+
                 if text == Button.BACK:
                     change_step(user=user, step=Step.HOME)
                     await bot.send_message(entity=user.chat_id, message=MessageText.WELLCOME.format(name=user.name),
@@ -300,6 +301,13 @@ async def my_event_handler(event: CallbackQuery.Event):
                 await bot.edit_message(entity=user.chat_id, message=message, text=MessageText.PANEL_CLOSED,
                                        buttons=None)
 
+            elif StepPrefix.EDITING_TITLE in str(user.step) and data == CallBackQuery.BACK_TO_MANAGE:
+                file_rowid = StepPrefix.get_file_rowid(prefix=StepPrefix.EDITING_TITLE, step=user.step)
+                change_step(user=user, step=Step.HOME)
+                status = get_file_status(file_rowid=file_rowid)
+                markup = make_manage_panel_inline_markup(rowid=file_rowid, status=status)
+                await bot.edit_message(entity=user.chat_id, message=message, buttons=markup)
+
             elif data == CallBackQuery.NULL:
                 message = MessageText.WRONG_INLINE_INPUT
                 await event.answer(message=message)
@@ -316,8 +324,8 @@ async def my_event_handler(event: CallbackQuery.Event):
 
                 await bot.edit_message(entity=user.chat_id, message=message, buttons=markup)
 
-            elif CallBackQueryPrefix.SET_FILE_TITLE in data:
-                prefix = CallBackQueryPrefix.SET_FILE_TITLE
+            elif CallBackQueryPrefix.EDITE_FILE_TITLE in data:
+                prefix = CallBackQueryPrefix.EDITE_FILE_TITLE
                 file_rowid = CallBackQueryPrefix.get_file_rowid(prefix=prefix, data=data)
 
                 file_uploader = get_file_uploader(rowid=file_rowid)
@@ -330,11 +338,24 @@ async def my_event_handler(event: CallbackQuery.Event):
                     uploader = file_uploader
 
                     if user.chat_id == int(uploader):
-                        change_step(user=user, step=(StepPrefix.SETTING_TITLE_FOR_FILE + file_rowid))
-                        await bot.send_message(entity=user.chat_id, message=MessageText.SEND_DESIRE_TITLE,
-                                               buttons=back_markup)
+                        change_step(user=user, step=(StepPrefix.EDITING_TITLE + file_rowid))
+                        markup = make_edit_title_panel_inline_markup(rowid=file_rowid)
+                        await bot.edit_message(entity=user.chat_id, message=message, buttons=markup)
                     else:
                         await event.answer(message=MessageText.ACCESS_DENIED_WARNING, alert=True)
+
+            elif CallBackQueryPrefix.DELETE_FILE_TITLE in data:
+                file_rowid = CallBackQueryPrefix.get_file_rowid(prefix=CallBackQueryPrefix.DELETE_FILE_TITLE, data=data)
+                set_file_title(file_rowid=file_rowid, title='')
+                status = get_file_status(file_rowid=file_rowid)
+                markup = make_manage_panel_inline_markup(rowid=file_rowid, status=status)
+                await event.answer(message=MessageText.FILE_UPDATED, alert=True)
+                await bot.edit_message(entity=user.chat_id, message=message, text="", buttons=markup)
+
+            elif CallBackQueryPrefix.SET_FILE_TITLE in data:
+                file_rowid = CallBackQueryPrefix.get_file_rowid(prefix=CallBackQueryPrefix.SET_FILE_TITLE, data=data)
+                change_step(user=user, step=StepPrefix.SETTING_TITLE_FOR_FILE + file_rowid)
+                await bot.send_message(entity=user.chat_id, message=MessageText.SEND_DESIRE_TITLE, buttons=back_markup)
 
             elif CallBackQueryPrefix.DELETE_FILE in data:
                 file_rowid = CallBackQueryPrefix.get_file_rowid(prefix=CallBackQueryPrefix.DELETE_FILE, data=data)

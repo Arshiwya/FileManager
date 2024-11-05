@@ -68,7 +68,7 @@ def make_manage_panel_inline_markup(rowid, status):
 
     markup = [
         [
-            button.inline(text='Set title 🔖', data=f'{CallBackQueryPrefix.SET_FILE_TITLE}{rowid}'),
+            button.inline(text='Edit title 🔖', data=f'{CallBackQueryPrefix.EDITE_FILE_TITLE}{rowid}'),
             button.inline(text='Delete file 🗑', data=f'{CallBackQueryPrefix.DELETE_FILE}{rowid}'),
 
         ],
@@ -106,6 +106,25 @@ def make_delete_panel_inline_markup(rowid):
         [
             button.inline(text='Yes ✅', data=f'{CallBackQueryPrefix.KILL_FILE}{rowid}'),
             button.inline(text='No ❌', data=f'{CallBackQueryPrefix.MANAGE}{rowid}'),
+
+        ],
+
+    ]
+
+    return markup
+
+
+def make_edit_title_panel_inline_markup(rowid):
+    markup = [
+
+        [
+            button.inline(text='Set new title 🏷', data=f'{CallBackQueryPrefix.SET_FILE_TITLE}{rowid}'),
+            button.inline(text='Delete title ✂️', data=f'{CallBackQueryPrefix.DELETE_FILE_TITLE}{rowid}'),
+
+        ],
+
+        [
+            button.inline(text='Back to manage 🔙', data=f'{CallBackQuery.BACK_TO_MANAGE}'),
 
         ],
 

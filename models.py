@@ -32,6 +32,7 @@ class Button:
 class StepPrefix:
     MANAGING_FILE = "managing-"
     CONFIRM_DELETE_FILE = "delete-"
+    EDITING_TITLE = "edit-title-"
     SETTING_TITLE_FOR_FILE = 'titling-'
 
     @classmethod
@@ -45,11 +46,14 @@ class StepPrefix:
 class CallBackQuery:
     NULL = 'null'
     CLOSE_PANEL = 'close-panel'
+    BACK_TO_MANAGE = 'back-to-manage'
 
 
 class CallBackQueryPrefix:
     MANAGE = "manage-"
     SET_FILE_TITLE = 'title-'
+    EDITE_FILE_TITLE = "edit-title-"
+    DELETE_FILE_TITLE = "delete-title-"
     DELETE_FILE = 'delete-'
     KILL_FILE = 'kill-'
     ACTIVE_STATUS = 'status+'
