@@ -13,7 +13,7 @@ from keyboards import home_markup, tos_markup, back_markup, make_manage_inline_m
     make_delete_panel_inline_markup
 from reports import Report, ErrorReport, ReportCode
 from messages import MessageText
-from models import MyUser, Step, Link, StepPrefix, Button, CallBackQueryPrefix, CallBackQuery
+from models import MyUser, Step, Link, TextOperationPrefix, StepPrefix, Button, CallBackQueryPrefix, CallBackQuery
 
 
 @bot.on(event=NewMessage)
@@ -23,6 +23,7 @@ async def main_handler(event: NewMessage.Event):
     message = event.message
 
     if type(chat) == User:
+
         user = get_user(chat)
 
         if user is None:
@@ -34,11 +35,58 @@ async def main_handler(event: NewMessage.Event):
                 await bot.send_message(entity=chat.id, message=MessageText.SIMPLE_ERROR)
 
         else:
+
             user: MyUser
+
             if (text == '/start' and user.step != Step.TOS) or (user.step == Step.HOME and text == Button.BACK):
                 change_step(user=user, step=Step.HOME)
                 await bot.send_message(entity=user.chat_id, message=MessageText.WELLCOME.format(name=user.name),
                                        buttons=home_markup)
+
+            elif TextOperationPrefix.DOWNLOAD_FILE in text:
+                file_rowid = TextOperationPrefix.get_file_rowid(prefix=TextOperationPrefix.DOWNLOAD_FILE, text=text)
+                file = get_file(file_rowid=file_rowid)
+
+                if file is None:
+                    await bot.send_message(entity=user.chat_id, message=MessageText.FILE_NOT_FOUND,
+                                           buttons=home_markup)
+
+                else:
+                    file_id = file[0]
+                    access_hash = int(file[2])
+                    file_reference = file[3]
+                    file_type = file[4]
+                    status = file[5]
+                    uploader = get_file_uploader(rowid=file_rowid)
+
+                    if status == 1:
+                        if file_type == 'image':
+                            image = InputPhoto(id=file_id, access_hash=access_hash,
+                                               file_reference=file_reference)
+                            await bot.send_file(entity=user.chat_id, file=image, caption=None)
+
+                        elif file_type == 'doc':
+                            file = InputDocument(id=file_id, access_hash=access_hash,
+                                                 file_reference=file_reference)
+                            await bot.send_file(entity=user.chat_id, file=file, caption=None)
+
+                    else:
+                        if uploader == user.chat_id:
+
+                            if file_type == 'image':
+                                image = InputPhoto(id=file_id, access_hash=access_hash,
+                                                   file_reference=file_reference)
+                                await bot.send_file(entity=user.chat_id, file=image, caption=None)
+
+                            elif file_type == 'doc':
+                                file = InputDocument(id=file_id, access_hash=access_hash,
+                                                     file_reference=file_reference)
+                                await bot.send_file(entity=user.chat_id, file=file, caption=None)
+
+                            await bot.send_message(entity=user.chat_id, message=MessageText.FILE_IS_DRAFT_OWNER_TEXT)
+
+                        else:
+                            await bot.send_message(entity=user.chat_id, message=MessageText.FILE_IS_DRAFT)
 
             elif user.step == Step.TOS:
 
@@ -142,7 +190,7 @@ async def main_handler(event: NewMessage.Event):
                 else:
                     try:
                         rowid = int(text)
-                        file = get_file(rowid)
+                        file = get_file(file_rowid=rowid)
 
                         if file is None:
                             await bot.send_message(entity=user.chat_id, message=MessageText.FILE_NOT_FOUND,

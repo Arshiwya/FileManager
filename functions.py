@@ -83,10 +83,10 @@ def get_user_files(user: MyUser):
         return result
 
 
-def get_file(file_id):
+def get_file(file_rowid):
     cur = db.cursor()
     query = "select * from files where rowid = ?"
-    cur.execute(query, (file_id,))
+    cur.execute(query, (file_rowid,))
     result = cur.fetchone()
 
     if result is None:

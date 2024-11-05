@@ -41,3 +41,6 @@ FILE_ID  = `{file_id}`
     {link}
     
     """
+
+    FILE_IS_DRAFT = "This file will be published soon ⏳"
+    FILE_IS_DRAFT_OWNER_TEXT = "This file is yours and draft . You can make it published in manage panel ⚠️"
